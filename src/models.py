@@ -1,7 +1,7 @@
 import datetime
 
 from typing import Annotated
-from sqlalchemy import MetaData, ForeignKey, text
+from sqlalchemy import Column, Integer, MetaData, ForeignKey, String, Table, text
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base, str_256
 import enum
@@ -17,7 +17,7 @@ updated_at = Annotated[datetime.datetime, mapped_column(
 class WorkersOrm(Base):
     __tablename__ = 'workers'
 
-    workers_id: Mapped[intpk]
+    worker_id: Mapped[intpk]
     username: Mapped[str]
 
 class Workload(enum.Enum):
@@ -31,7 +31,7 @@ class ResumesOrm(Base):
     title: Mapped[str_256]
     compensation: Mapped[int | None]
     workload: Mapped[Workload]
-    worker_id: Mapped[int] = mapped_column(ForeignKey('workers.workers_id', ondelete='CASCADE'))
+    worker_id: Mapped[int] = mapped_column(ForeignKey('workers.worker_id', ondelete='CASCADE'))
     created_at: Mapped[created_at] 
     updated_at: Mapped[updated_at]
 
@@ -43,9 +43,9 @@ class ResumesOrm(Base):
 
 metadata_obj = MetaData()
 
-# workers_table  = Table(
-#     'workers',
-#     metadata_obj,
-#     Column('id', Integer, primary_key=True),
-#     Column('username', String),
-# )
+workers_table  = Table(
+    'workers',
+    metadata_obj,
+    Column('worker_id', Integer, primary_key=True),
+    Column('username', String),
+)
