@@ -17,14 +17,20 @@ SyncORM.select_workers()
 SyncORM.update_workers()
 
 SyncORM.insert_resumes()
-SyncORM.select_resumes_avg_compensation()
+# SyncORM.select_resumes_avg_compensation()
+
+# SyncORM.select_workers_with_lazy_relationship()
+# SyncORM.select_workers_with_joined_relationship()
+SyncORM.select_workers_with_selectin_relationship()
+
 
 async def async_main():
     await AsyncORM.insert_additional_resumes()
     await AsyncORM.join_cte_subquery_window_func()
 
+# asyncio.run(async_main())
 
-asyncio.run(async_main())
+
 # SyncCore.select_workers()
 # SyncCore.update_workers()
 

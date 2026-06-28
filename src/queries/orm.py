@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, and_, select, text, insert, func, cast
 from database import async_engine, sync_engine, session_factory, async_session_factory, Base
 from models import ResumesOrm, WorkersOrm
-from sqlalchemy.orm import aliased
+from sqlalchemy.orm import aliased, joinedload, selectinload
 
         
 class SyncORM:
@@ -80,7 +80,54 @@ class SyncORM:
             result = res.all()
             print(result[0].avg_compensation)
 
+    @staticmethod
+    def select_workers_with_lazy_relationship():
+        with session_factory() as session:
+            query = (
+                select(WorkersOrm)
+            )
+            res = session.execute(query)
+            result = res.scalars().all()
 
+            workers_1_resumes = result[0].resumes
+            print(workers_1_resumes)
+
+            workers_2_resumes = result[1].resumes
+            print(workers_2_resumes)
+
+    @staticmethod
+    def select_workers_with_joined_relationship():
+        with session_factory() as session:
+            query = (
+                select(WorkersOrm)
+                .options(joinedload(WorkersOrm.resumes))
+            )
+            res = session.execute(query)
+            result = res.unique().scalars().all()
+
+            workers_1_resumes = result[0].resumes
+            print(workers_1_resumes)
+
+            workers_2_resumes = result[1].resumes
+            print(workers_2_resumes)
+
+    @staticmethod
+    def select_workers_with_selectin_relationship():
+        with session_factory() as session:
+            query = (
+                select(WorkersOrm)
+                .options(selectinload(WorkersOrm.resumes))
+            )
+            res = session.execute(query)
+            result = res.unique().scalars().all()
+
+            workers_1_resumes = result[0].resumes
+            print(workers_1_resumes)
+
+            workers_2_resumes = result[1].resumes
+            print(workers_2_resumes)
+
+            
 class AsyncORM:
     @staticmethod
     async def async_insert_data():
@@ -161,7 +208,7 @@ class AsyncORM:
             res = await session.execute(query)
             result = res.all()
 
-            print(f'{result=}')
+            # print(f'{result=}')
 
 
 
