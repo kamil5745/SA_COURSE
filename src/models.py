@@ -1,7 +1,7 @@
 import datetime
 
 from typing import Annotated
-from sqlalchemy import Column, Integer, MetaData, ForeignKey, String, Table, text
+from sqlalchemy import Column, Integer, MetaData, ForeignKey, String, Table, text, Index, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Base, str_256
 import enum
@@ -20,7 +20,15 @@ class WorkersOrm(Base):
     worker_id: Mapped[intpk]
     username: Mapped[str]
 
-    resumes: Mapped[list["ResumesOrm"]] = relationship(back_populates="worker")
+    resumes: Mapped[list["ResumesOrm"]] = relationship(
+        back_populates="worker",
+    )
+
+    resumes_parttime: Mapped[list["ResumesOrm"]] = relationship(
+        primaryjoin="and_(WorkersOrm.worker_id == ResumesOrm.worker_id, ResumesOrm.workload == 'parttime')",
+        order_by='ResumesOrm.resumes_id.desc()',
+        viewonly=True,
+    )
 
 class Workload(enum.Enum):
     parttime = 'parttime'
@@ -37,11 +45,15 @@ class ResumesOrm(Base):
     created_at: Mapped[created_at] 
     updated_at: Mapped[updated_at]
 
-    worker: Mapped["WorkersOrm"] = relationship(back_populates="resumes")
+    worker: Mapped["WorkersOrm"] = relationship(back_populates="resumes",)
 
     repr_cols_num = 4
     repr_cols = ("created_at",)
 
+    __table_args__ = (
+        Index('title_index', 'title'),
+        CheckConstraint('compensation > 0', name='check_compensation_positive'),
+    )
 
 
 metadata_obj = MetaData()

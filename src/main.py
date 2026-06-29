@@ -21,14 +21,15 @@ SyncORM.insert_resumes()
 
 # SyncORM.select_workers_with_lazy_relationship()
 # SyncORM.select_workers_with_joined_relationship()
-SyncORM.select_workers_with_selectin_relationship()
-
+# SyncORM.select_workers_with_selectin_relationship()
+SyncORM.select_workers_with_condition_relationship()
+SyncORM.select_workers_with_condition_relationship_contains_eager()
 
 async def async_main():
     await AsyncORM.insert_additional_resumes()
     await AsyncORM.join_cte_subquery_window_func()
 
-# asyncio.run(async_main())
+asyncio.run(async_main())
 
 
 # SyncCore.select_workers()
